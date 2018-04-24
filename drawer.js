@@ -39,10 +39,14 @@ export default class Drawer{
     this.gl.clearColor(0,0,0,1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
     //entityの描画
-    let e = this.gl.getUniformLocation(this.program,"entities");
-    this.gl.uniform2f(e,entities[0].pos.x,entities[0].pos.y);
-    let e2 = this.gl.getUniformLocation(this.program,"entities2");
-    this.gl.uniform2f(e2,entities[1].pos.x,entities[1].pos.y);
+      let size = this.gl.getUniformLocation(this.program,"size");
+    this.gl.uniform1i(size,entities.length);
+    entities.forEach((e,i)=>{
+      let location = this.gl.getUniformLocation(this.program,"entities["+i+"]");
+      this.gl.uniform2f(location,entities[i].pos.x,entities[i].pos.y);
+    }
+    )
+    //this.gl.uniform2fv(e2,entities);
 
     this.gl.drawArrays(this.gl.TRIANGLES,0,3);
     this.gl.drawArrays(this.gl.TRIANGLES,3,3);
@@ -54,8 +58,10 @@ export default class Drawer{
       let ext = path.split(".")[1];
       let shader;
       switch(ext){
-        case "frag" : shader = this.gl.createShader(this.gl.FRAGMENT_SHADER);break;  
-        case "vert" : shader = this.gl.createShader(this.gl.VERTEX_SHADER);break;  
+        case "frag" : shader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+          break;  
+        case "vert" : shader = this.gl.createShader(this.gl.VERTEX_SHADER);
+          break;  
       }
       let xhr = new XMLHttpRequest();
       xhr.open("GET",path,true);

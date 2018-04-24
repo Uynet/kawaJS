@@ -1,7 +1,8 @@
 export default class Entity{
   constructor(pos){
     this.pos = pos;
-    this.vel={x:1,y:0};
+    cl("Po")
+    this.vel={x:RAND(5),y:RAND(1)};
   }
   Collision(){
     if(this.pos.y <100 ){
