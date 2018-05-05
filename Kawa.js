@@ -1,15 +1,24 @@
+let gl
 export default class KAWA{
   constructor(){
-    this.canvas = document.createElement("canvas");
-    this.ctx = this.canvas.getContext("2d");
-    this.ctx.width = 400;
-    this.ctx.height = 400;
-    this.gl = this.canvas.getContext("gl");
+    const cl = console.log
+    const canvas = document.createElement("canvas");
+    this.canvas = canvas;
+    canvas.width = 800;
+    canvas.height = 800;
+    gl = canvas.getContext("webgl");
+    //get GL
+    cl(gl)
+
     this.Container = function(){ }
     this.Renderer = function(){ }
   }
+  render(){
+    gl.clearColor(0,0,0,1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+  }
   rect(x,y,w,h){
-    this.ctx.beginPath();
-    this.ctx.fillRect(20, 20, 80, 40);
+    ctx.beginPath();
+    ctx.fillRect(20, 20, 80, 40);
   }
 }
