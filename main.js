@@ -1,7 +1,4 @@
-import Game from './game.js';
 import KAWA from './Kawa.js';
-
-
 
 (function(){
   let k = new KAWA();

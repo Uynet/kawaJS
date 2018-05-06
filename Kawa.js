@@ -7,18 +7,23 @@ export default class KAWA{
     canvas.width = 800;
     canvas.height = 800;
     gl = canvas.getContext("webgl");
-    //get GL
-    cl(gl)
+    const VertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,VertexPositionBuffer);
+    let vertex = new Float32Array([
+        0.0, 0.5,
+        0.5, 0.0,
+        -0.5, 0.0
+    ]);
+    gl.bufferData(gl.ARRAY_BUFFER,vertex,gl.STATIC_DRAW);
 
     this.Container = function(){ }
     this.Renderer = function(){ }
   }
+  
   render(){
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-  }
-  rect(x,y,w,h){
-    ctx.beginPath();
-    ctx.fillRect(20, 20, 80, 40);
+    //gl.drawArrays(gl.TRIANGLES,0,3);
+    //gl.flush();
   }
 }
