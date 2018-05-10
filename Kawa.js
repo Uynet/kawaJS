@@ -17,38 +17,55 @@ export default class KAWA{
         gl.attachShader(program, fs);
         gl.linkProgram(program);
         gl.useProgram(program);
-
+        //program
+        
+        //color
     });
-    this.Container = function(){ }
-    this.Triangle = function(p1,p2,p3,p4,p5,p6){
-      this.p1 = p1;
-      this.p2 = p2;
-      this.p3 = p3;
-      this.p4 = p4;
-      this.p5 = p5;
-      this.p6 = p6;
+    //members
+    this.Rectangle = function(x,y,w,h){
+      this.x = x;
+      this.y = y;
+      this.w = w;
+      this.h = h;
     }
     this.Renderer = function(){ }
     this.Stage = function(){
       this.list = [];
-      this.add = t=>{
-        this.list.push(t);
+      this.add = e=>{
+        this.list.push(e);
+        //color
+        const colorBuffer = gl.createBuffer();
+        const vertexColor = [
+          1.0, 0.0, 0.0, 1.0,
+          0.0, 1.0, 0.0, 1.0,
+          0.0, 0.0, 1.0, 1.0
+        ];
+        const attributeLocation2 = gl.getAttribLocation(program, "color");
+        gl.enableVertexAttribArray(attributeLocation2);
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertexColor),gl.STATIC_DRAW);
+        gl.vertexAttribPointer(attributeLocation2, 4, gl.FLOAT, false, 0, 0);
+        //position
         const VertexPositionBuffer = gl.createBuffer();
-        //
-        gl.bindBuffer(gl.ARRAY_BUFFER,VertexPositionBuffer);
-        let vertex = new Float32Array([
-          t.p1, t.p2,
-          t.p3, t.p4,
-          t.p5, t.p6
-        ]);
-        gl.bufferData(gl.ARRAY_BUFFER,vertex,gl.DYNAMIC_DRAW);
+        let vertex = [
+          e.x, e.y,
+          e.x, e.y+e.h,
+          e.x+e.w, e.y+e.h,
+        ];
         const attributeLocation = gl.getAttribLocation(program, "position");
         gl.enableVertexAttribArray(attributeLocation);
         gl.bindBuffer(gl.ARRAY_BUFFER, VertexPositionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertex),gl.STATIC_DRAW);
         gl.vertexAttribPointer(attributeLocation, 2, gl.FLOAT, false, 0, 0);
-        //
       }
     }
+  }
+  CreateVBO(vertex){
+    const vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,vbo);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertex),gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER,null);//無効化
+    return vbo;
   }
   createShader(path){
     return new Promise((resolve, reject) => {
@@ -82,16 +99,8 @@ export default class KAWA{
   render(Stage){
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES,0,3);
     //Draw StageObject
-    Stage.list.forEach((e,i)=>{
-      let vertex = new Float32Array([
-        e.p1, e.p2,
-        e.p3, e.p4,
-        e.p5, e.p6
-      ]);
-      gl.bufferData(gl.ARRAY_BUFFER,vertex,gl.DYNAMIC_DRAW);
-      gl.drawArrays(gl.TRIANGLES,0,3);
-    })
     gl.flush();
   }
 }

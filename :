@@ -1,8 +1,0 @@
-import KAWA from './Kawa.js';
-
-(function(){
-  let k = new KAWA();
-  document.getElementById("po").appendChild(k.canvas);
-  let t = new k.Triangle(0.0, 0.5, 0.5, 0.0, -0.5, 0.0);
-  console.log(t)
-})();
