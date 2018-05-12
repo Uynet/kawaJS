@@ -1,26 +1,8 @@
 let gl
 export default class KAWA{
   constructor(){
-    const cl = console.log
-    const canvas = document.createElement("canvas");
-    this.canvas = canvas;
-    canvas.width = 800;
-    canvas.height = 800;
-    //gl
-    gl = canvas.getContext("webgl");
-    this.gl = gl;
-    const program = gl.createProgram();
-    this.createShader("main.vert").then(vs => {
-        gl.attachShader(program, vs); // ProgramとVertex Shaderを結び付ける
-        return this.createShader("main.frag");// Fragment Shaderを作成
-    }).then(fs => {
-        gl.attachShader(program, fs);
-        gl.linkProgram(program);
-        gl.useProgram(program);
-        //program
-        
-        //color
-    });
+    const cl = console.log;
+    this.GLSetUp();
     //members
     this.Rectangle = function(x,y,w,h){
       this.x = x;
@@ -28,37 +10,33 @@ export default class KAWA{
       this.w = w;
       this.h = h;
     }
-    this.Renderer = function(){ }
     this.Stage = function(){
       this.list = [];
       this.add = e=>{
         this.list.push(e);
-        //color
-        const colorBuffer = gl.createBuffer();
-        const vertexColor = [
-          1.0, 0.0, 0.0, 1.0,
-          0.0, 1.0, 0.0, 1.0,
-          0.0, 0.0, 1.0, 1.0
-        ];
-        const attributeLocation2 = gl.getAttribLocation(program, "color");
-        gl.enableVertexAttribArray(attributeLocation2);
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertexColor),gl.STATIC_DRAW);
-        gl.vertexAttribPointer(attributeLocation2, 4, gl.FLOAT, false, 0, 0);
-        //position
-        const VertexPositionBuffer = gl.createBuffer();
-        let vertex = [
-          e.x, e.y,
-          e.x, e.y+e.h,
-          e.x+e.w, e.y+e.h,
-        ];
-        const attributeLocation = gl.getAttribLocation(program, "position");
-        gl.enableVertexAttribArray(attributeLocation);
-        gl.bindBuffer(gl.ARRAY_BUFFER, VertexPositionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertex),gl.STATIC_DRAW);
-        gl.vertexAttribPointer(attributeLocation, 2, gl.FLOAT, false, 0, 0);
       }
     }
+  }
+  GLSetUp(){
+    const canvas = document.createElement("canvas");
+    this.canvas = canvas;
+    canvas.width = 800;
+    canvas.height = 800;
+    //gl
+    gl = canvas.getContext("webgl");
+    this.gl = gl;
+    this.program = gl.createProgram();
+    this.createShader("main.vert").then(vs => {
+        gl.attachShader(this.program, vs); // ProgramとVertex Shaderを結び付ける
+        return this.createShader("main.frag");// Fragment Shaderを作成
+    }).then(fs => {
+        gl.attachShader(this.program, fs);
+        gl.linkProgram(this.program);
+        gl.useProgram(this.program);
+        //program
+        
+        //color
+    });
   }
   CreateVBO(vertex){
     const vbo = gl.createBuffer();
@@ -95,12 +73,32 @@ export default class KAWA{
       xhr.send(null);
     });
   }
+  SetAttribute(vbo,attL){
+    gl.bindBuffer(gl.ARRAY_BUFFER,vbo)
+    gl.enableVertexAttribArray(attL);
+    gl.vertexAttribPointer(attL,2,gl.FLOAT,false,0,0);
+  }
   
   render(Stage){
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES,0,3);
-    //Draw StageObject
+    for(let e of Stage.list){
+      const vbo = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER,vbo);
+      const vertex = [
+        e.x,e.y,
+        e.x+e.w,e.y,
+        e.x+e.w,e.y+e.h,
+        e.x,e.y+e.h,
+      ]
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertex),gl.STATIC_DRAW);
+      //Attribute
+      const attLocation = gl.getAttribLocation(this.program,"position");
+      gl.enableVertexAttribArray(attLocation);
+      gl.vertexAttribPointer(attLocation,2,gl.FLOAT,false,0,0);
+      //Draw
+      gl.drawArrays(gl.TRIANGLE_FAN,0,4);
+    }
     gl.flush();
   }
 }
