@@ -5,7 +5,7 @@ export default class KAWA{
     cl = console.log;
     const KAWA = this;
     this.GLSetUp();
-    this.vertex = [];
+    this.vertex = [1,1,4,5,1,4];
     this.vbo = this.CreateVBO(this.vertex);
     //members
     this.Rectangle = function(x,y,w,h){
@@ -104,25 +104,30 @@ export default class KAWA{
       this.vertex = [
         e.x,e.y,
         e.x+e.w,e.y,
-        e.x+e.w,e.y+e.h,
-        e.x,e.y+e.h,
+        e.x,e.y-e.h,
+        e.x+e.w,e.y,
+        e.x,e.y-e.h,
+        e.x+e.w,e.y-e.h,
       ]
       gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.vertex),gl.STATIC_DRAW);
       //Attribute
       const attLocation = gl.getAttribLocation(this.program,"position");
       this.SetAttribute(this.vbo,attLocation);
+      gl.bindBuffer(gl.ARRAY_BUFFER,this.vbo);
+      gl.drawArrays(gl.TRIANGLES,0,3);
+      gl.drawArrays(gl.TRIANGLES,3,3);
       //tex
       const texVert = [
         0.0,0.0,
         1.0,0.0,
         0.0,1.0,
+        1.0,0.0,
+        0.0,1.0,
         1.0,1.0,
-      ]
+      ];
       const texVBO = this.CreateVBO(texVert);
       const uvL = gl.getAttribLocation(this.program,"uv");
       this.SetAttribute(texVBO,uvL);
-
-      gl.drawArrays(gl.TRIANGLE_FAN,0,4);
     }
     gl.flush();
   }
